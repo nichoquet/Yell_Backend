@@ -1,11 +1,19 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-
+import cors from "cors";
 const app = express();
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'UPDATE'],
+    credentials: true
+};
+app.use(cors(corsOptions));
 const server = http.createServer(app);
 const port = 3000;
-const io = new Server(server);
+const io = new Server(server, {
+    cors: corsOptions
+});
 
 app.get("/", (request, response) => {
     response.sendFile(__dirname + "/index.html");
