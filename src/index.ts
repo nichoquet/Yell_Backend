@@ -5,7 +5,7 @@ import cors from "cors";
 import { ModelsHandler } from './ModelsHandler';
 import { TextDiscussion, TextDiscussionSchema } from './Models/TextDiscussion';
 import { Message } from './Models/Message';
-import { HydratedDocument, model, Schema } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017');
