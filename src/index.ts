@@ -1,19 +1,22 @@
-import express from 'express';
+import express, { json } from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from "cors";
 import { ModelsHandler } from './ModelsHandler';
-import { TextDiscussion, TextDiscussionSchema } from './Models/TextDiscussion';
-import { Message } from './Models/Message';
+import { TextDiscussion, TextDiscussionSchema } from './Domain/Models/TextDiscussion';
+import { Message } from './Domain/Models/Message';
 import { HydratedDocument } from 'mongoose';
-
+import { InjectionHandler } from './InjectionHandler';
+import dotenv from 'dotenv'
+dotenv.config()
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017');
+mongoose.connect('mongodb://127.0.0.1:27017/yell');
 mongoose.Promise = global.Promise
 
 const modelHandler = new ModelsHandler();
 
 const app = express();
+app.use(json());
 const port = 3000;
 
 //Cors
@@ -31,7 +34,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: corsOptions
 });
-
+const injectionHandler = new InjectionHandler();
+injectionHandler.inject();
+injectionHandler.routeHandler.setupRoutes(app);
 // Hearthbeat
 app.get("/", (request, response) => {
     response.sendStatus(200).send("Success")
@@ -56,7 +61,6 @@ app.post("/textdiscussion", async (request, response) => {
 
 io.on('connection', function(socket) {
   const discussionId = socket.handshake.query.textDiscussionId as string;
-  console.log()
   console.log('a user connected');
   socket.on("disconnect", () => {
     console.log("user disconnected");
@@ -76,5 +80,5 @@ async function addMessageToDiscussion (message: Message, discussionId: string) {
 
 // Server start
 server.listen(port, () => {
-    console.log(`listening at http://localhost:${port}`)
+  console.log(`listening at http://localhost:${port}`)
 })
