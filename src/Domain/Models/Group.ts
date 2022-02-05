@@ -17,4 +17,3 @@ export class Group {
         this.textDiscussions = textDiscussions;
     }
 }
-export const GroupSchema = new Schema<Group>({ name: String, owner: { type: Schema.Types.ObjectId, ref: "User" }, members: [{ user: { type: Schema.Types.ObjectId, ref: "User" }}], textDiscussions: [{ type: String, ref: "TextDiscussion" }] });

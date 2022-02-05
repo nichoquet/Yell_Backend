@@ -1,7 +1,8 @@
-import { User, UserSchema } from "../../../Domain/Models/User";
+import { User } from "../../../Domain/Models/User";
 import { ModelsHandler } from "src/ModelsHandler";
 import { CreateUserInfoDTO } from "src/Rest/DTOs/CreateUserInfoDTO";
 import { UserRepository } from "./UserRepository";
+import { UserSchema } from "../../../Application/Schema/UserSchema";
 
 export class MongoDBUserRepository implements UserRepository {
     private modelsHandler: ModelsHandler;

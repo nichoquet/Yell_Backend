@@ -3,11 +3,13 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from "cors";
 import { ModelsHandler } from './ModelsHandler';
-import { TextDiscussion, TextDiscussionSchema } from './Domain/Models/TextDiscussion';
+import { TextDiscussion } from './Domain/Models/TextDiscussion';
 import { Message } from './Domain/Models/Message';
 import { HydratedDocument } from 'mongoose';
 import { InjectionHandler } from './InjectionHandler';
 import dotenv from 'dotenv'
+import { TextDiscussionSchema } from './Application/Schema/TextDiscussionSchema';
+import { SchemaHandler } from './Application/Schema/SchemaHandler';
 dotenv.config()
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/yell');
@@ -36,6 +38,8 @@ const io = new Server(server, {
 });
 const injectionHandler = new InjectionHandler();
 injectionHandler.inject();
+const schemaHandler = new SchemaHandler(injectionHandler.modelHandler);
+schemaHandler.initSchema();
 injectionHandler.routeHandler.setupRoutes(app);
 // Hearthbeat
 app.get("/", (request, response) => {

@@ -1,7 +1,9 @@
-import { Group, GroupSchema } from "../../../Domain/Models/Group";
+import { Group } from "../../../Domain/Models/Group";
 import { ModelsHandler } from "../../..//ModelsHandler";
 import { CreateGroupInfoDTO } from "../../../Rest/DTOs/CreateGroupInfoDTO";
 import { GroupRepository } from "./GroupRepository";
+import { GroupSchema } from "../../../Application/Schema/GroupSchema";
+import { HydratedDocument } from "mongoose";
 
 export class MongoDBGroupRepository implements GroupRepository {
     private modelsHandler: ModelsHandler;
@@ -15,7 +17,9 @@ export class MongoDBGroupRepository implements GroupRepository {
                     reject("not_found")
                 }
                 else {
-                    resolve(group);
+                    group.populate("textDiscussions").then((groupWithTextDiscussion) => {
+                        resolve(groupWithTextDiscussion);
+                    })
                 }
             });
         });
@@ -45,8 +49,11 @@ export class MongoDBGroupRepository implements GroupRepository {
             resolve(groupId);
         });
     }
-    updateGroup(group: Group): Promise<Group> {
-        throw new Error("Method not implemented.");
+    updateGroup(group: HydratedDocument<Group>): Promise<Group> {
+        return new Promise(async (resolve) => {
+            await group.save()
+            resolve(group);
+        });
     }
     deleteGroup(id: string): Promise<void> {
         throw new Error("Method not implemented.");

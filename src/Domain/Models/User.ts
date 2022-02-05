@@ -1,5 +1,3 @@
-import { Schema } from "mongoose";
-
 export class User {
     public _id: string;
     public username: string;
@@ -11,5 +9,3 @@ export class User {
         this.password = password;
     }
 }
-
-export const UserSchema = new Schema<User>({ username: String, password: { type: String, select: false } });
