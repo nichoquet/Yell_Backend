@@ -9,7 +9,8 @@ export class CreationGroupRestValidator extends Validator<Request> {
             this.isOwnerEmpty,
             this.isNameEmpty,
             this.isMembersEmpty,
-            this.areMembersIdsValid
+            this.areMembersIdsValid,
+            this.isOwnerIdValid
         ];
     }
     
@@ -45,6 +46,18 @@ export class CreationGroupRestValidator extends Validator<Request> {
         }
         else if (groupInfo.body.members.some((member: any) => !isValidObjectId(member.user))) {
             return { message: "member_id_not_valid" }
+        }
+        else {
+            return undefined
+        }
+    }
+
+    private async isOwnerIdValid(groupInfo: Request): Promise<ValidatorAnswerErrorMessage | undefined>{
+        if (!("owner" in groupInfo.body) || groupInfo.body.owner === "") {
+            return undefined;
+        }
+        else if (!isValidObjectId(groupInfo.body.owner)) {
+            return { message: "owner_id_not_valid" }
         }
         else {
             return undefined
