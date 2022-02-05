@@ -3,13 +3,32 @@ import { CreateTextDiscussionInfoDTO } from "../../../Rest/DTOs/CreateTextDiscus
 import { ModelsHandler } from "../../../ModelsHandler";
 import { TextDiscussionRepository } from "./TextDiscussionRepository";
 import { TextDiscussionSchema } from "../../../Application/Schema/TextDiscussionSchema";
+import { Message } from "src/Domain/Models/Message";
+import { HydratedDocument } from "mongoose";
 
 export class MongoDBTextDiscussionRepository implements TextDiscussionRepository {
     private modelsHandler: ModelsHandler;
     public constructor (modelsHandler: ModelsHandler) {
         this.modelsHandler = modelsHandler;
     }
+    async addMessageToTextDiscussion(id: string, message: Message): Promise<void> {
+        const textDiscussion = await this.getTextDiscussionById(id) as HydratedDocument<TextDiscussion>;
+        textDiscussion.messages.push(message);
+        textDiscussion.save();
+    }
     getTextDiscussionById(id: string): Promise<TextDiscussion> {
+        return new Promise((resolve, reject) => {
+            this.modelsHandler.getObject<TextDiscussion>("TextDiscussion", id, TextDiscussionSchema).then((textDiscussion) => {
+                if (textDiscussion === null) {
+                    reject("not_found")
+                }
+                else {
+                    resolve(textDiscussion);
+                }
+            });
+        });
+    }
+    getTextDiscussionByIdWithGroup(id: string): Promise<TextDiscussion> {
         return new Promise((resolve, reject) => {
             this.modelsHandler.getObject<TextDiscussion>("TextDiscussion", id, TextDiscussionSchema).then((textDiscussion) => {
                 if (textDiscussion === null) {

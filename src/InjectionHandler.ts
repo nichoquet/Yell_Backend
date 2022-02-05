@@ -19,11 +19,12 @@ import { CreationTextDiscussionRestValidator } from "./Rest/RestValidators/Creat
 import { TextDiscussionFactory } from "./Rest/Factorys/TextDiscussionFactory";
 import { TextDiscussionController } from "./Rest/Controllers/TextDiscussionController";
 import { MongoDBTextDiscussionRepository } from "./Application/Repositorys/TextDiscussionRepository/MongoDBTextDiscussionRepository";
+import { Server } from "socket.io";
 
 export class InjectionHandler {
     public modelHandler: ModelsHandler;
     public routeHandler: RouteHandler;
-    public inject () {
+    public inject (ioServer: Server) {
         // Common
         this.modelHandler = new ModelsHandler();
         if (process.env.APP_SALT === undefined) {
@@ -53,7 +54,7 @@ export class InjectionHandler {
         const textDiscussionService = new TextDiscussionService(textDiscussionRepository, creationTextDiscussionDomainValidatior, groupRepository);
         const creationTextDiscussionRestValidator = new CreationTextDiscussionRestValidator();
         const textDiscussionFactory = new TextDiscussionFactory(creationTextDiscussionRestValidator);
-        const textDiscussionController = new TextDiscussionController(textDiscussionService, textDiscussionFactory);
+        const textDiscussionController = new TextDiscussionController(textDiscussionService, textDiscussionFactory, ioServer);
 
         this.routeHandler = new RouteHandler(userController, groupController, textDiscussionController);
     }

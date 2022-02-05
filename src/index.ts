@@ -37,44 +37,14 @@ const io = new Server(server, {
     cors: corsOptions
 });
 const injectionHandler = new InjectionHandler();
-injectionHandler.inject();
+injectionHandler.inject(io);
 const schemaHandler = new SchemaHandler(injectionHandler.modelHandler);
 schemaHandler.initSchema();
-injectionHandler.routeHandler.setupRoutes(app);
+injectionHandler.routeHandler.setupRoutes(app, io);
 // Hearthbeat
 app.get("/", (request, response) => {
     response.sendStatus(200).send("Success")
 })
-
-// Get Discussion by id
-app.get("/textdiscussion/:id", async (request, response) => {
-  const discussionId = request.params.id;
-  let discussion = await modelHandler.getObject<TextDiscussion>("TextDiscussion", discussionId, TextDiscussionSchema)
-  if (discussion === null) {
-    response.sendStatus(404);
-  }
-  response.send(discussion)
-})
-
-// Create new Discussion
-app.post("/textdiscussion", async (request, response) => {
-  const messages = new Array<Message>()
-  const discussion = await modelHandler.getNewObject<TextDiscussion>("TextDiscussion", { messages }, TextDiscussionSchema);
-  response.send(discussion)
-})
-
-io.on('connection', function(socket) {
-  const discussionId = socket.handshake.query.textDiscussionId as string;
-  console.log('a user connected');
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-  // When recieving message, send the message to all users
-  socket.on("chat_message", async (payload) => {
-    await addMessageToDiscussion(payload, discussionId)
-    io.emit("chat_message", payload);
-  });
-});
 
 async function addMessageToDiscussion (message: Message, discussionId: string) {
   const discussion = (await modelHandler.getObject<TextDiscussion>("TextDiscussion", discussionId, TextDiscussionSchema)) as HydratedDocument<TextDiscussion>

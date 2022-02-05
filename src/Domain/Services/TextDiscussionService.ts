@@ -1,6 +1,7 @@
 import { GroupRepository } from "src/Application/Repositorys/GroupRepository/GroupRepository";
 import { TextDiscussionRepository } from "src/Application/Repositorys/TextDiscussionRepository/TextDiscussionRepository";
 import { CreateTextDiscussionInfoDTO } from "src/Rest/DTOs/CreateTextDiscussionInfoDTO";
+import { TextDiscussionMessageDTO } from "src/Rest/DTOs/TextDiscussionMessageDTO";
 import { CreationTextDiscussionDomainValidator } from "../DomainValidators/CreationTextDiscussionDomainValidator";
 import { TextDiscussion } from "../Models/TextDiscussion";
 
@@ -26,9 +27,14 @@ export class TextDiscussionService {
             })
         })
     }
+
+    async addMessageToDiscussion (textDiscussionId: string, message: TextDiscussionMessageDTO): Promise<void> {
+        await this.textDiscussionRepository.addMessageToTextDiscussion(textDiscussionId, message)
+    }
+
     getById (id: string): Promise<TextDiscussion> {
         return new Promise((resolve, reject) => {
-            this.textDiscussionRepository.getTextDiscussionById(id).then((discussion) => {
+            this.textDiscussionRepository.getTextDiscussionByIdWithGroup(id).then((discussion) => {
                 resolve(discussion);
             }).catch(() => {
                 reject("not_found");

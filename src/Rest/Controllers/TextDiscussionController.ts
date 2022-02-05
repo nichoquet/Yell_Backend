@@ -1,16 +1,34 @@
 import { Request, Response } from "express";
+import { Server, Socket } from "socket.io";
 import { TextDiscussion } from "src/Domain/Models/TextDiscussion";
 import { TextDiscussionService } from "src/Domain/Services/TextDiscussionService";
+import { TextDiscussionMessageDTO } from "../DTOs/TextDiscussionMessageDTO";
 import { TextDiscussionFactory } from "../Factorys/TextDiscussionFactory";
 import { CRUDController } from "./CRUDController";
 
 export class TextDiscussionController implements CRUDController<TextDiscussion> {
     private textDiscussionService: TextDiscussionService;
     private textDiscussionFactory: TextDiscussionFactory;
+    private ioServer: Server;
     
-    public constructor (textDiscussionService: TextDiscussionService, textDiscussionFactory: TextDiscussionFactory) {
+    public constructor (textDiscussionService: TextDiscussionService, textDiscussionFactory: TextDiscussionFactory, ioServer: Server) {
         this.textDiscussionService = textDiscussionService;
         this.textDiscussionFactory = textDiscussionFactory;
+    }
+
+    public onSocketConnection (socket: Socket) {
+        const discussionId = socket.handshake.query.textDiscussionId as string;
+        console.log('a user connected');
+        socket.on("disconnect", () => {
+            console.log("user disconnected");
+        });
+        // When recieving message, send the message to all users
+        socket.on("chat_message_" + discussionId, (payload) => this.onChatMessage(payload, discussionId));
+    }
+
+    public async onChatMessage (payload: TextDiscussionMessageDTO, discussionId: string) {
+        this.textDiscussionService.addMessageToDiscussion(discussionId, payload);
+        this.ioServer.emit("chat_message_" + discussionId, payload);
     }
 
     public async create(req: Request, res: Response) {
