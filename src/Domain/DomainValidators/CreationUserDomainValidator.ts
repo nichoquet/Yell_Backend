@@ -3,7 +3,7 @@ import { CreateUserInfoDTO } from "src/Rest/DTOs/CreateUserInfoDTO";
 import { ValidatorAnswerErrorMessage } from "../../Validators/DTOs/ValidatorAnswerErrorMessage";
 import { Validator } from "../../Validators/Validator";
 
-export class CreationUserDomainValidatior extends Validator<CreateUserInfoDTO>{
+export class CreationUserDomainValidator extends Validator<CreateUserInfoDTO>{
     private userRepository: UserRepository;
 
     public constructor (userRepository: UserRepository) {

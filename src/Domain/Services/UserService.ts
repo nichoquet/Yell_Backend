@@ -1,18 +1,18 @@
 import { CreateUserInfoDTO } from "src/Rest/DTOs/CreateUserInfoDTO";
 import { User } from "src/Domain/Models/User";
 import { UserRepository } from "src/Application/Repositorys/UserRepository/UserRepository";
-import { CreationUserDomainValidatior } from "../DomainValidators/CreationUserDomainValidatior";
+import { CreationUserDomainValidator } from "../DomainValidators/CreationUserDomainValidator";
 
 export class UserService {
     private userRepository: UserRepository;
-    private creationUserValidatior: CreationUserDomainValidatior;
-    public constructor (userRepository: UserRepository, creationUserValidatior: CreationUserDomainValidatior) {
+    private creationUserDomainValidator: CreationUserDomainValidator;
+    public constructor (userRepository: UserRepository, creationUserDomainValidator: CreationUserDomainValidator) {
         this.userRepository = userRepository;
-        this.creationUserValidatior = creationUserValidatior;
+        this.creationUserDomainValidator = creationUserDomainValidator;
     }
     create (userInfo: CreateUserInfoDTO): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            this.creationUserValidatior.validate(userInfo).then(() => {
+            this.creationUserDomainValidator.validate(userInfo).then(() => {
                 this.userRepository.createUser(userInfo).then((userId) => {
                     resolve(userId);
                 })
