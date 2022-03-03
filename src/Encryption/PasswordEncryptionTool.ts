@@ -7,14 +7,21 @@ export class PasswordEncryptionTool {
         this.salt = salt;
     }
 
-    public encryptPassword (password: string) {
-        this.salt = bcrypt.genSaltSync()
-        const encryptedPassword = bcrypt.hashSync(password, this.salt)
-        return encryptedPassword;
+    public encryptPassword (password: string): Promise<string> {
+        return new Promise<string>((resolve) => {
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(password, salt, function(err, hash) {
+                    resolve(hash)
+                });
+            });
+        });
     }
 
-    public comparePassword (password: string, encryptedPasswordToCompareTo: string) {
-        const encryptedPassword = this.encryptPassword(password)
-        return encryptedPassword == encryptedPasswordToCompareTo
+    public async comparePassword (password: string, encryptedPasswordToCompareTo: string): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            bcrypt.compare(password, encryptedPasswordToCompareTo, function(err, result) {
+                resolve(result)
+            });
+        });
     }
 }

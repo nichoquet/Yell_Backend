@@ -26,6 +26,7 @@ export class UserController implements CRUDController<User> {
             res.send(errorList);
         });
     }
+
     public get(req: Request, res: Response) {
         const userId = req.params.id;
         this.userService.getById(userId).then((user) => {
@@ -34,6 +35,20 @@ export class UserController implements CRUDController<User> {
             res.status(400);
             res.send(errorList);
         })
+    }
+    
+    public login(req: Request, res: Response) {
+        this.userFactory.fromLoginRequest(req).then((userInfo) => {
+            this.userService.login(userInfo).then((token) => {
+                res.send(token);
+            }).catch((errorList) => {
+                res.status(400);
+                res.send(errorList);
+            })
+        }).catch((errorList) => {
+            res.status(400);
+            res.send(errorList);
+        });
     }
     public update(req: Request, res: Response) {
         throw new Error("Method not implemented.");

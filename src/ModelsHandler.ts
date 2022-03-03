@@ -14,11 +14,15 @@ export class ModelsHandler {
     public getModel<T>(collectionName: string, schema: Schema<T>): Model<T> {
         return model<T>(collectionName, schema);
     }
-    public async getObject<T>(collectionName: string, id: string, schema: Schema<T>, searchField = "_id"): Promise<HydratedDocument<T> | null> {
+    public async getObject<T>(collectionName: string, id: string, schema: Schema<T>, searchField = "_id", includeField = new Array<string>()): Promise<HydratedDocument<T> | null> {
         const modelInstance = this.getModel<T>(collectionName, schema);
         const search = {} as any
         search[searchField] = id;
-        return await modelInstance.findOne(search).exec();
+        let query = modelInstance.findOne(search);
+        includeField.forEach(field => {
+            query.select('+'+field)
+        });
+        return await query.exec();
     }
     public async getAllObjects<T>(collectionName: string, schema: Schema<T>): Promise<Array<HydratedDocument<T>>> {
         const modelInstance = this.getModel<T>(collectionName, schema);

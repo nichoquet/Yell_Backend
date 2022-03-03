@@ -20,6 +20,9 @@ import { TextDiscussionFactory } from "./Rest/Factorys/TextDiscussionFactory";
 import { TextDiscussionController } from "./Rest/Controllers/TextDiscussionController";
 import { MongoDBTextDiscussionRepository } from "./Application/Repositorys/TextDiscussionRepository/MongoDBTextDiscussionRepository";
 import { Server } from "socket.io";
+import { AuthentificationService } from "./Domain/Services/AuthentificationService";
+import { LoginUserRestValidator } from "./Rest/RestValidators/LoginUserRestValidator";
+import { RandomStringGenerator } from "./Domain/Generators/RandomStringGenerator";
 
 export class InjectionHandler {
     public modelHandler: ModelsHandler;
@@ -31,13 +34,16 @@ export class InjectionHandler {
             throw new Error("No salt configured")
         }
         const passwordEncryptionTool = new PasswordEncryptionTool(process.env.APP_SALT)
+        const randomStringGenerator = new RandomStringGenerator();
 
         // User
         const userRepository = new MongoDBUserRepository(this.modelHandler);
+        const authentificationService = new AuthentificationService(userRepository, randomStringGenerator, passwordEncryptionTool)
+        const loginUserRestValidator = new LoginUserRestValidator();
         const creationUserDomainValidatior = new CreationUserDomainValidator(userRepository);
-        const userService = new UserService(userRepository, creationUserDomainValidatior);
+        const userService = new UserService(userRepository, creationUserDomainValidatior, authentificationService);
         const creationUserRestValidator = new CreationUserRestValidator();
-        const userFactory = new UserFactory(passwordEncryptionTool, creationUserRestValidator);
+        const userFactory = new UserFactory(passwordEncryptionTool, creationUserRestValidator, loginUserRestValidator);
         const userController = new UserController(userService, userFactory);
 
         // Group
