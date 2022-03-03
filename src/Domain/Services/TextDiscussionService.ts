@@ -44,7 +44,6 @@ export class TextDiscussionService {
     async addTextDiscussionToGroup (discussionId: string): Promise<void> {
         const discussion = await this.textDiscussionRepository.getTextDiscussionById(discussionId);
         const group = await this.groupRepository.getGroupById(discussion.group._id);
-        console.log(group)
         group.textDiscussions.push(discussion);
         await this.groupRepository.updateGroup(group);
     }

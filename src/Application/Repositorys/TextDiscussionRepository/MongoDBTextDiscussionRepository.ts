@@ -38,7 +38,6 @@ export class MongoDBTextDiscussionRepository implements TextDiscussionRepository
                     textDiscussion.populate("group").then((textDiscussionWithFroup) => {
                         resolve(textDiscussionWithFroup);
                     }).catch(error => {
-                        console.log(error)
                         reject(error)
                     })
                 }
