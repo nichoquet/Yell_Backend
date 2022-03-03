@@ -45,13 +45,6 @@ injectionHandler.routeHandler.setupRoutes(app, io);
 app.get("/", (request, response) => {
     response.sendStatus(200).send("Success")
 })
-
-async function addMessageToDiscussion (message: Message, discussionId: string) {
-  const discussion = (await modelHandler.getObject<TextDiscussion>("TextDiscussion", discussionId, TextDiscussionSchema)) as HydratedDocument<TextDiscussion>
-  discussion.messages.push(message);
-  discussion.save();
-}
-
 // Server start
 server.listen(port, () => {
   console.log(`listening at http://localhost:${port}`)
