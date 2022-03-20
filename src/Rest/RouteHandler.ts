@@ -15,6 +15,10 @@ export class RouteHandler {
     }
 
     public setupRoutes (router: Router, ioServer: Server) {
+        router.use((req, res, next) => {
+            this.userController.loginMiddleware(req, res, next);
+        });
+        router.get("/user/group", this.groupController.getAllOfUser.bind(this.groupController));
         router.post("/user", this.userController.create.bind(this.userController));
         router.get("/user/:id", this.userController.get.bind(this.userController));
         router.post("/user/login", this.userController.login.bind(this.userController));

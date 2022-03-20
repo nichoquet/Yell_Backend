@@ -30,4 +30,13 @@ export class GroupService {
             })
         })
     }
+    getAllGroupOfUser (userId: string): Promise<Array<Group>> {
+        return new Promise((resolve, reject) => {
+            this.groupRepository.getAllGroupOfUser(userId).then((groupList) => {
+                resolve(groupList);
+            }).catch(() => {
+                reject("not_found");
+            })
+        })
+    }
 }

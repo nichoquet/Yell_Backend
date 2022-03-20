@@ -37,6 +37,15 @@ export class UserService {
         })
             
     }
+    getUserByToken (token: string): Promise<User> {
+        return new Promise(async (resolve, reject) => {
+            this.authentificationService.getUserFromOathToken(token).then(user => {
+                resolve(user);
+            }).catch(err => {
+                reject(err);
+            })
+        })   
+    }
     getById (id: string): Promise<User> {
         return new Promise((resolve, reject) => {
             this.userRepository.getUserById(id).then((user) => {
@@ -45,5 +54,8 @@ export class UserService {
                 reject("not_found");
             })
         })
+    }
+    setAuthentificatedUser (user: User) {
+        this.authentificationService.loggedInUser = user;
     }
 }

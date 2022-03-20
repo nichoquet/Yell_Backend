@@ -1,4 +1,4 @@
 export interface TextDiscussionMessageDTO {
-    user: string;
+    userId: string;
     message: string;
 }

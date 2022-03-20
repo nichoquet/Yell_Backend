@@ -18,16 +18,17 @@ export class TextDiscussionController implements CRUDController<TextDiscussion> 
 
     public onSocketConnection (socket: Socket) {
         const discussionId = socket.handshake.query.textDiscussionId as string;
+        const userToken = socket.handshake.query.userToken as string;
         console.log('a user connected');
         socket.on("disconnect", () => {
             console.log("user disconnected");
         });
         // When recieving message, send the message to all users
-        socket.on("chat_message_" + discussionId, (payload) => this.onChatMessage(payload, discussionId));
+        socket.on("chat_message_" + discussionId, (payload) => this.onChatMessage(payload, discussionId, userToken));
     }
 
-    public async onChatMessage (payload: TextDiscussionMessageDTO, discussionId: string) {
-        this.textDiscussionService.addMessageToDiscussion(discussionId, payload);
+    public async onChatMessage (payload: TextDiscussionMessageDTO, discussionId: string, userToken: string) {
+        this.textDiscussionService.addMessageToDiscussion(discussionId, payload.message, userToken);
         this.ioServer.emit("chat_message_" + discussionId, payload);
     }
 

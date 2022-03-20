@@ -43,6 +43,13 @@ export class MongoDBGroupRepository implements GroupRepository {
             });
         });
     }
+    getAllGroupOfUser(userId: string): Promise<Group[]> {
+        return new Promise((resolve) => {
+            this.modelsHandler.getAllObjectsWith<Group>("Group", GroupSchema, "members.user", userId).then((groupList) => {
+                resolve(groupList);
+            });
+        });
+    }
     createGroup(groupInfo: CreateGroupInfoDTO): Promise<string> {
         return new Promise(async (resolve) => {
             const groupId = await this.modelsHandler.createNewObject<Group>("Group", groupInfo, GroupSchema);

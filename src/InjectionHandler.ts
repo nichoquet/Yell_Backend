@@ -52,12 +52,12 @@ export class InjectionHandler {
         const groupService = new GroupService(groupRepository, creationGroupDomainValidatior);
         const creationGroupRestValidator = new CreationGroupRestValidator();
         const groupFactory = new GroupFactory(creationGroupRestValidator);
-        const groupController = new GroupController(groupService, groupFactory);
+        const groupController = new GroupController(groupService, groupFactory, authentificationService);
 
         // TextDiscussion
         const textDiscussionRepository = new MongoDBTextDiscussionRepository(this.modelHandler);
         const creationTextDiscussionDomainValidatior = new CreationTextDiscussionDomainValidator(groupRepository);
-        const textDiscussionService = new TextDiscussionService(textDiscussionRepository, creationTextDiscussionDomainValidatior, groupRepository);
+        const textDiscussionService = new TextDiscussionService(textDiscussionRepository, creationTextDiscussionDomainValidatior, groupRepository, userRepository);
         const creationTextDiscussionRestValidator = new CreationTextDiscussionRestValidator();
         const textDiscussionFactory = new TextDiscussionFactory(creationTextDiscussionRestValidator);
         const textDiscussionController = new TextDiscussionController(textDiscussionService, textDiscussionFactory, ioServer);

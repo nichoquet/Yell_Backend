@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { User } from "src/Domain/Models/User";
 import { UserService } from "src/Domain/Services/UserService";
 import { UserFactory } from "../Factorys/UserFactory";
@@ -50,6 +50,30 @@ export class UserController implements CRUDController<User> {
             res.send(errorList);
         });
     }
+
+    public loginMiddleware (req: Request, res: Response, next: NextFunction) {
+        const token = this.extractToken(req);
+        if (token !== null) {
+            this.userService.getUserByToken(token).then((user) => {
+                this.userService.setAuthentificatedUser(user);
+                next()
+            }).catch((err) => {
+                res.statusCode = 401;
+                res.send("User not found");
+            }) 
+        }
+        else {
+            next()
+        }
+    }
+
+    private extractToken (req: Request) {
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            return req.headers.authorization.split(' ')[1];
+        }
+        return null;
+    }
+
     public update(req: Request, res: Response) {
         throw new Error("Method not implemented.");
     }

@@ -1,5 +1,6 @@
 import { GroupRepository } from "src/Application/Repositorys/GroupRepository/GroupRepository";
 import { TextDiscussionRepository } from "src/Application/Repositorys/TextDiscussionRepository/TextDiscussionRepository";
+import { UserRepository } from "src/Application/Repositorys/UserRepository/UserRepository";
 import { CreateTextDiscussionInfoDTO } from "src/Rest/DTOs/CreateTextDiscussionInfoDTO";
 import { TextDiscussionMessageDTO } from "src/Rest/DTOs/TextDiscussionMessageDTO";
 import { CreationTextDiscussionDomainValidator } from "../DomainValidators/CreationTextDiscussionDomainValidator";
@@ -8,11 +9,13 @@ import { TextDiscussion } from "../Models/TextDiscussion";
 export class TextDiscussionService {
     private textDiscussionRepository: TextDiscussionRepository;
     private groupRepository: GroupRepository;
+    private userRepository: UserRepository;
     private creationTextDiscussionDomainValidator: CreationTextDiscussionDomainValidator;
-    public constructor (textDiscussionRepository: TextDiscussionRepository, creationTextDiscussionDomainValidator: CreationTextDiscussionDomainValidator, groupRepository: GroupRepository) {
+    public constructor (textDiscussionRepository: TextDiscussionRepository, creationTextDiscussionDomainValidator: CreationTextDiscussionDomainValidator, groupRepository: GroupRepository, userRepository: UserRepository) {
         this.textDiscussionRepository = textDiscussionRepository;
         this.creationTextDiscussionDomainValidator = creationTextDiscussionDomainValidator;
         this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
     }
     create (textDiscussionInfo: CreateTextDiscussionInfoDTO): Promise<string> {
         return new Promise(async (resolve, reject) => {
@@ -28,8 +31,9 @@ export class TextDiscussionService {
         })
     }
 
-    async addMessageToDiscussion (textDiscussionId: string, message: TextDiscussionMessageDTO): Promise<void> {
-        await this.textDiscussionRepository.addMessageToTextDiscussion(textDiscussionId, message)
+    async addMessageToDiscussion (textDiscussionId: string, message: string, userToken: string): Promise<void> {
+        const user = await this.userRepository.getUserByOathToken(userToken);
+        await this.textDiscussionRepository.addMessageToTextDiscussion(textDiscussionId, { message, user })
     }
 
     getById (id: string): Promise<TextDiscussion> {

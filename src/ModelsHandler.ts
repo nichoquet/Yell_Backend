@@ -28,6 +28,13 @@ export class ModelsHandler {
         const modelInstance = this.getModel<T>(collectionName, schema);
         return await modelInstance.find().exec();
     }
+    public async getAllObjectsWith<T>(collectionName: string, schema: Schema<T>, searchField: string, searchValue: any): Promise<Array<HydratedDocument<T>>> {
+        const modelInstance = this.getModel<T>(collectionName, schema);
+        const search = {} as any
+        search[searchField] = searchValue;
+        const query = modelInstance.find(search);
+        return await query.exec();
+    }
     public async hasObject<T>(collectionName: string, id: string, schema: Schema<T>, searchField = "_id"): Promise<boolean> {
         const modelInstance = this.getModel<T>(collectionName, schema);
         const search = {} as any

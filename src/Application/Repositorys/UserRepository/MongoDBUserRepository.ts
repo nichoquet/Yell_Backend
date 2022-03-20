@@ -9,6 +9,18 @@ export class MongoDBUserRepository implements UserRepository {
     public constructor (modelsHandler: ModelsHandler) {
         this.modelsHandler = modelsHandler;
     }
+    getUserByOathToken(token: string): Promise<User> {
+        return new Promise((resolve, reject) => {
+            this.modelsHandler.getObject<User>("User", token, UserSchema, "token").then((user) => {
+                if (user === null) {
+                    reject("not_found")
+                }
+                else {
+                    resolve(user);
+                }
+            });
+        });
+    }
     getUserHashedPasswordByUsername(username: string): Promise<string> {
         return new Promise((resolve, reject) => {
             this.modelsHandler.getObject<User>("User", username, UserSchema, "username", ["password"]).then((user) => {
