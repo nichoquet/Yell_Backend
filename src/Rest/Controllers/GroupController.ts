@@ -39,13 +39,18 @@ export class GroupController implements CRUDController<Group> {
         })
     }
     public getAllOfUser(req: Request, res: Response) {
-        const userId = this.authentificationService.loggedInUser._id;
-        this.groupService.getAllGroupOfUser(userId).then((groupList) => {
-            res.send(groupList);
-        }).catch((errorList) => {
-            res.status(400);
-            res.send(errorList);
-        })
+        if (this.authentificationService.loggedInUser === undefined) {
+            res.status(401);
+        }
+        else {
+            const userId = this.authentificationService.loggedInUser._id;
+            this.groupService.getAllGroupOfUser(userId).then((groupList) => {
+                res.send(groupList);
+            }).catch((errorList) => {
+                res.status(400);
+                res.send(errorList);
+            })
+        }
     }
     public update(req: Request, res: Response) {
         throw new Error("Method not implemented.");

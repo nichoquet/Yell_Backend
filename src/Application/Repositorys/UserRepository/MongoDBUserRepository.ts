@@ -35,11 +35,14 @@ export class MongoDBUserRepository implements UserRepository {
     }
     getUserOathToken(username: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            this.getUserByUsername(username).then(user => {
-                resolve(user.token);
-            }).catch(err => {
-                reject(err);
-            })
+            this.modelsHandler.getObject<User>("User", username, UserSchema, "username", ["token"]).then((user) => {
+                if (user === null) {
+                    reject("not_found")
+                }
+                else {
+                    resolve(user.token);
+                }
+            });
         });
     }
     getUserByUsername(username: string): Promise<User> {

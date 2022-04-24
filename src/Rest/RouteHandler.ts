@@ -21,6 +21,7 @@ export class RouteHandler {
         router.get("/user/group", this.groupController.getAllOfUser.bind(this.groupController));
         router.post("/user", this.userController.create.bind(this.userController));
         router.get("/user/:id", this.userController.get.bind(this.userController));
+        router.get("/user", this.userController.getSelf.bind(this.userController));
         router.post("/user/login", this.userController.login.bind(this.userController));
         router.post("/group", this.groupController.create.bind(this.groupController));
         router.get("/group/:id", this.groupController.get.bind(this.groupController));

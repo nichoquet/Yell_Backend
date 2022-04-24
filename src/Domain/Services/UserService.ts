@@ -55,6 +55,9 @@ export class UserService {
             })
         })
     }
+    getSelf (): User | undefined {
+        return this.authentificationService.loggedInUser;
+    }
     setAuthentificatedUser (user: User) {
         this.authentificationService.loggedInUser = user;
     }

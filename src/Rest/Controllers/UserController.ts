@@ -36,6 +36,16 @@ export class UserController implements CRUDController<User> {
             res.send(errorList);
         })
     }
+
+    public getSelf(req: Request, res: Response) {
+        const user = this.userService.getSelf();
+        if (user !== undefined) {
+            res.send(user);
+        }
+        else {
+            res.status(401);
+        }
+    }
     
     public login(req: Request, res: Response) {
         this.userFactory.fromLoginRequest(req).then((userInfo) => {

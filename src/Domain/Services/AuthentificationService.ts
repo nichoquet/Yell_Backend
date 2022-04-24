@@ -8,7 +8,7 @@ export class AuthentificationService {
     private userRepository: UserRepository;
     private randomStringGenerator: RandomStringGenerator;
     private passwordEncryptionTool: PasswordEncryptionTool;
-    public loggedInUser: User;
+    public loggedInUser: User | undefined;
     public constructor (userRepository: UserRepository, randomStringGenerator: RandomStringGenerator, passwordEncryptionTool: PasswordEncryptionTool) {
         this.userRepository = userRepository;
         this.randomStringGenerator = randomStringGenerator;
